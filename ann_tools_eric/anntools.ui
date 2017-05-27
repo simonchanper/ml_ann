@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>903</width>
-    <height>584</height>
+    <width>897</width>
+    <height>562</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -24,9 +24,12 @@
     <item row="3" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
-       <widget class="QLineEdit" name="prevLineEdit">
-        <property name="text">
-         <string>XML</string>
+       <widget class="QPlainTextEdit" name="prevPlainTextEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
         <property name="readOnly">
          <bool>true</bool>
@@ -34,9 +37,12 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="currLineEdit">
-        <property name="text">
-         <string>XML</string>
+       <widget class="QPlainTextEdit" name="currPlainTextEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
         <property name="readOnly">
          <bool>true</bool>
