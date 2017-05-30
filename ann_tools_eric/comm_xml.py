@@ -66,6 +66,7 @@ def read_xml_object(input_xml_file):
             return obj_ann_dict.values()
         else:
             print ('No objects')
+            return False
     else:
         print ('no xml file')
     
@@ -100,16 +101,4 @@ def insert_object(xml_file, pos_list):
         tree.write(xml_file,"UTF-8")
     else:
         print ('no xml file')
-
-
-'''
-test area
-'''
-#lis = [100, 72, 89, 99]
-#xml = '/Users/xiang/ml_ann/ann_tools_eric/dataset/ob_curr/00002.xml'
-#insert_object(xml, lis)
-#remove_all_object(xml)
-#xxx = read_xml_object(xml)
-#print (xxx.values())
-#print (object_isCheck(xml))
 

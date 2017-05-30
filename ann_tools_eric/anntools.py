@@ -16,9 +16,7 @@ from comm_xml import insert_object, remove_all_object, object_isCheck, read_xml_
 from PIL import Image
 
 class MainWindow(QMainWindow, Ui_MainWindow):
-    """
-    Class documentation goes here.
-    """
+    
     def __init__(self, parent=None):
         """
         Constructor
@@ -46,14 +44,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.currScene = QGraphicsScene()
         self.currGraphicsView.setScene(self.currScene)
         
-        self.drawing_init(self.prevGraphicsView, self.prevScene)
-        self.drawing_init(self.currGraphicsView, self.currScene)
-        
         self.num_of_index = ' '
         self.curr_image_list = []
         self.prev_xml_list = []
         self.rubberBand = QRubberBand(QRubberBand.Rectangle, self)
         self.origin = QPoint()
+        
+        self.prev_count_mouse_click = None
+        self.curr_count_mouse_click = None
         
         self.prevGraphicsView.mousePressEvent = self.prev_mouse_press
         self.prevGraphicsView.mouseMoveEvent = self.prev_mouse_move
@@ -83,22 +81,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             print ('load image first')
     
-    def drawing_init(self, gview, gscene):
-        pixmap = QPixmap(gview.viewport().size())
-        pixmap.fill(Qt.transparent)
-        painter = QPainter(pixmap)
-        painter.drawRect(0, 0, 10, 10)
-        painter.end()
-
-        gscene.addPixmap(pixmap)
-        gview.update()
-        gscene.clear()
-    
     def draw_init_gview(self, xml_path, gview, gscene, color, image_path):
         pixmap = QPixmap(gview.viewport().size())
         pos_list = read_xml_object(xml_path)
         x_p, y_p = self.image2scene(pixmap, image_path)
-        print ('m->i', pos_list)
+        print ('xml -> image', pos_list)
         if object_isCheck(xml_path) is True:
             for pos_item in pos_list:
                 print (pos_item)
@@ -157,10 +144,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def curr_mouse_move(self, event):
         if not self.origin.isNull():
             self.rubberBand.setGeometry(QRect(self.origin, self.currGraphicsView.pos()+event.pos()).normalized())
+            
+    def draw_init_scene(self, event, xml_path, gview, gscene, color, img_path):
+        
+        if object_isCheck(xml_path) is False:
+            pixmap = QPixmap(gview.viewport().size())
+            pixmap.fill(Qt.transparent)
+            painter = QPainter(pixmap)
+            painter.setPen(Qt.yellow)
+            painter.drawRect(0, 0, 0, 0)
+            painter.end()
+            gscene.addPixmap(pixmap)
+        else:
+            gscene.clear()
+            self.draw_init_gview(xml_path, gview, gscene, color, img_path)
+        
+        print ('initialize the scene successfully')
         
     def draw_on_gview(self, event, xmlpath, gview, gscene, color, image_path):
         mousePos = gview.mapToScene(event.pos())
-        self.pixmap = QPixmap(gview.viewport().size())
+        self.pixmap = QPixmap(self.prevGraphicsView.viewport().size())
         self.pixmap.fill(Qt.transparent)
         painter = QPainter(self.pixmap)
         painter.setPen(color)
@@ -168,6 +171,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         painter.end()
             
         gscene.addPixmap(self.pixmap)
+        gscene.update()
         gview.update()
         
         pos_insert = [mousePos.x()-(self.endx-self.startx), mousePos.y()-(self.endy-self.starty), self.endx-self.startx, self.endy-self.starty]
@@ -189,7 +193,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.endx=event.x()
             self.endy=event.y()
             
-            self.draw_on_gview(event, self.prevXMLPath, self.prevGraphicsView, self.prevScene, Qt.green,  self.prevImgPath)
+            if self.prev_count_mouse_click is False:
+                self.prev_count_mouse_click = True
+                self.draw_init_scene(event, self.prevXMLPath, self.prevGraphicsView, self.prevScene, Qt.green, self.prevImgPath)
+            elif self.prev_count_mouse_click is True:
+                self.draw_on_gview(event, self.prevXMLPath, self.prevGraphicsView, self.prevScene, Qt.green,  self.prevImgPath)
             
         elif event.button() == Qt.RightButton:
             self.clean_bbox(self.prevScene, self.prevXMLPath)
@@ -200,13 +208,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.endx=event.x()
             self.endy=event.y()
             
-            self.draw_on_gview(event, self.currXMLPath, self.currGraphicsView, self.currScene, Qt.red, self.currImgPath)  
+            if self.curr_count_mouse_click is False:
+                self.curr_count_mouse_click = True
+                self.draw_init_scene(event, self.currXMLPath, self.currGraphicsView, self.currScene, Qt.red, self.currImgPath)
+            elif self.curr_count_mouse_click is True:
+                self.draw_on_gview(event, self.currXMLPath, self.currGraphicsView, self.currScene, Qt.red, self.currImgPath)  
             
         elif event.button() == Qt.RightButton: 
             self.clean_bbox(self.currScene, self.currXMLPath)
         
     def image_show_gview(self, index):
-        
         self.prevImgPath = os.path.join(self.file_dir, 'prev', self.prev_image_list[index])
         self.currImgPath = os.path.join(self.file_dir, 'curr', self.curr_image_list[index])
         self.prevGraphicsView.setStyleSheet("border-image: url(%s);" % self.prevImgPath)
@@ -215,11 +226,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.fileNameLineEdit.setText(self.curr_image_list[index])
     
     @pyqtSlot()
-    def on_fileNameLineEdit_returnPressed(self):
-        """
-        Slot documentation goes here.
-        """
-    
+    def on_fileNameLineEdit_returnPressed(self):    
         fileName = self.fileNameLineEdit.text()
         if fileName is "":
             print ('Please enter an image name!')
@@ -243,9 +250,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @pyqtSlot()
     def on_rootPathSelButton_clicked(self):
-        """
-        Slot documentation goes here.
-        """
         self.prevScene.clear()
         self.currScene.clear()
         
@@ -283,6 +287,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             
             self.draw_init_gview(self.prevXMLPath, self.prevGraphicsView, self.prevScene, Qt.green, self.prevImgPath)
             self.draw_init_gview(self.currXMLPath, self.currGraphicsView, self.currScene, Qt.red, self.currImgPath)
+            
+            self.prev_count_mouse_click = False
+            self.curr_count_mouse_click = False
     
     def info_from_xml(self, xml_path, text_edit):
         text_edit.clear()
@@ -294,22 +301,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     
     @pyqtSlot()
     def on_prevPushBtn_clicked(self):
-        """
-        Slot documentation goes here.
-        """
-        
         self.prevScene.clear()
         self.currScene.clear()
         if self.num_of_index is ' ':
             print ('please open path')
         elif self.num_of_index is 0:
             self.num_of_index = len(self.curr_image_list)-1
-#            self.image_show_gview(self.num_of_index)
-#            self.prevXMLPath = os.path.join(self.file_dir, 'ob_prev', self.prev_xml_list[self.num_of_index])
-#            self.info_from_xml(self.prevXMLPath, self.prevPlainTextEdit)
-#            self.currXMLPath = os.path.join(self.file_dir, 'ob_curr', self.prev_xml_list[self.num_of_index])
-#            self.info_from_xml(self.currXMLPath, self.currPlainTextEdit)
-        
         else:
             self.num_of_index -= 1
             
@@ -324,20 +321,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     
     @pyqtSlot()
     def on_nextPushBtn_clicked(self):
-        """
-        Slot documentation goes here.
-        """
         self.prevScene.clear()
         self.currScene.clear()
         if self.num_of_index is ' ':
             print ('please open path')
         elif self.num_of_index is len(self.curr_image_list)-1:
             self.num_of_index = 0
-#            self.image_show_gview(self.num_of_index)
-#            self.prevXMLPath = os.path.join(self.file_dir, 'ob_prev', self.prev_xml_list[self.num_of_index])
-#            self.info_from_xml(self.prevXMLPath, self.prevPlainTextEdit)
-#            self.currXMLPath = os.path.join(self.file_dir, 'ob_curr', self.prev_xml_list[self.num_of_index])
-#            self.info_from_xml(self.currXMLPath, self.currPlainTextEdit)
         else:
             self.num_of_index += 1
         
