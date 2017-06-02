@@ -66,6 +66,6 @@ python anntools.py
   数据标注后，会在数据集根目录中生成ob_prev和ob_curr文件夹，里面会用同样文件名记录对应图像的信息（xml文件），将整个数据集打包（不要压缩）发给我即可。
 
 
-- 本软件已经通过Windows 7/10， Linux（Ubuntu14.04/16.04），MacOX（Sierra） 测试。
+- 本软件已经通过Windows 英文版 7/10， Linux（Ubuntu14.04/16.04），MacOX（Sierra） 测试。
 - 本软件会继续更新与维护，并将下一阶段项目时开放分割标注功能。
 - 如遇上bugs，请将错误信息截图发到xiang.chen@malongtech.cn，谢谢。
