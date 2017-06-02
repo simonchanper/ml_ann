@@ -7,7 +7,7 @@ import os, sys
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QRubberBand, QGraphicsScene, QFrame, QMainWindow, QFileDialog, QMessageBox, QDesktopWidget
 from PyQt5.QtGui import QPixmap, QPainter
-from PyQt5.QtCore import Qt, QPoint, QRect, QSize, pyqtSlot
+from PyQt5.QtCore import Qt, QPoint, QRect, QSize, pyqtSlot, QDir
 
 from Ui_anntools import Ui_MainWindow
 from xml_process import xml_generator, xml_parsing
@@ -218,8 +218,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.clean_bbox(self.currScene, self.currXMLPath)
         
     def image_show_gview(self, index):
-        self.prevImgPath = os.path.join(self.file_dir, 'prev', self.prev_image_list[index])
-        self.currImgPath = os.path.join(self.file_dir, 'curr', self.curr_image_list[index])
+        prevImgPath = os.path.join(self.file_dir, 'prev', self.prev_image_list[index])
+        self.prevImgPath = QDir.toNativeSeparators(prevImgPath)
+        currImgPath = os.path.join(self.file_dir, 'curr', self.curr_image_list[index])
+        self.currImgPath = QDir.toNativeSeparators(currImgPath)
         self.prevGraphicsView.setStyleSheet("border-image: url(%s);" % self.prevImgPath)
         self.currGraphicsView.setStyleSheet("border-image: url(%s);" % self.currImgPath)
         
