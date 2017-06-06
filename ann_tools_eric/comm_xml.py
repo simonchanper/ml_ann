@@ -102,3 +102,8 @@ def insert_object(xml_file, pos_list):
     else:
         print ('no xml file')
 
+def rect_size_isChecked(x, y):
+    if x is 0 and y is 0:
+        return False
+    else:
+        return True

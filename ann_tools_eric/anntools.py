@@ -12,7 +12,7 @@ from PyQt5.QtCore import Qt, QPoint, QRect, QSize, pyqtSlot, QDir
 from Ui_anntools import Ui_MainWindow
 from xml_process import xml_generator, xml_parsing
 from exif_info import get_info_from_image
-from comm_xml import insert_object, remove_all_object, object_isCheck, read_xml_object, conv_prop
+from comm_xml import insert_object, remove_all_object, object_isCheck, read_xml_object, conv_prop, rect_size_isChecked
 from PIL import Image
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -177,15 +177,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         pos_insert = [mousePos.x()-(self.endx-self.startx), mousePos.y()-(self.endy-self.starty), self.endx-self.startx, self.endy-self.starty]
         print ('scene -> image: ', pos_insert)
         
-        if image_path != '':
-            x_p,  y_p = self.scene2image(self.pixmap, image_path)
-            pos_i = conv_prop(pos_insert, x_p, y_p)
-            print ('image -> xml: ', pos_i)
-            insert_object(xmlpath, pos_i)
-            print ('position has been saved')
+        if rect_size_isChecked(self.endx-self.startx, self.endy-self.starty) is True:
+            if image_path != '':
+                x_p,  y_p = self.scene2image(self.pixmap, image_path)
+                pos_i = conv_prop(pos_insert, x_p, y_p)
+                print ('image -> xml: ', pos_i)
+                insert_object(xmlpath, pos_i)
+                print ('position has been saved')
+            else:
+                gscene.clear()
+                print ('load dataset first')
         else:
-            gscene.clear()
-            print ('load dataset first')
+            print ('Recentangle invaild')
 
     def prev_mouse_release(self, event):
         if event.button() == Qt.LeftButton:
