@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Module implementing MainWindow.
-"""
 
 import xml.etree.ElementTree as ET
 from xml.etree import ElementTree as etree

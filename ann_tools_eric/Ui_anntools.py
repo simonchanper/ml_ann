@@ -1,12 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/xiang/ml_ann/ann_tools_eric/anntools.ui'
-#
-# Created by: PyQt5 UI code generator 5.8.2
-#
-# WARNING! All changes made in this file will be lost!
-
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -117,14 +111,4 @@ class Ui_MainWindow(object):
         self.prevPushBtn.setShortcut(_translate("MainWindow", "A"))
         self.nextPushBtn.setText(_translate("MainWindow", "Next"))
         self.nextPushBtn.setShortcut(_translate("MainWindow", "D"))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
 
