@@ -381,7 +381,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             else: 
                 pass
             
-            self.prev_xml_list = os.listdir(os.path.join(self.file_dir, 'ob_prev'))
+            self.prev_xml_list = self.map_2_imglist(self.prev_image_list)
+            
             self.num_of_index = 0
             self.image_show_gview(self.num_of_index)
             
@@ -401,6 +402,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             qlist_for_display = self.read_from_dat('store.dat')
             prev_image_qlist = QStringListModel(qlist_for_display)
             self.fileListView.setModel(prev_image_qlist)
+            
+    def map_2_imglist(self, image_list):
+        list_xml = []
+        for img_item in self.prev_image_list:
+            img_name = img_item.split('.')
+            xml_name = img_name[0] + '.xml'
+            list_xml.append(xml_name)
+        return list_xml
     
     def info_from_xml(self, xml_path, text_edit):
         text_edit.clear()
