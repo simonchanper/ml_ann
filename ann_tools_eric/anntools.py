@@ -369,8 +369,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.rootPathLineEdit.setText('Home Folder: %s' % self.file_dir)
             
-            self.prev_image_list = os.listdir(os.path.join(self.file_dir, 'prev'))
-            self.curr_image_list = os.listdir(os.path.join(self.file_dir, 'curr'))
+            self.prev_image_list = sorted(os.listdir(os.path.join(self.file_dir, 'prev')))
+            self.curr_image_list = sorted(os.listdir(os.path.join(self.file_dir, 'curr')))
             
             assert len(self.prev_image_list) != 0
             assert len(self.prev_image_list) == len(self.curr_image_list)
